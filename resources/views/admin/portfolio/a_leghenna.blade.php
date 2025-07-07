@@ -1,0 +1,45 @@
+<x-app-layout :bodyClass="Auth::check() && Auth::user()->hasRole('admin') ? 'bg-[#FFD8A9]' : ''">
+    <div class="px-6 py-12 min-h-screen">
+        <div class="max-w-6xl mx-auto">
+            <h1 class="text-3xl font-bold font-playfair text-center text-gray-800 mb-10">Leg Henna Portfolio</h1>
+
+            <!-- Image Grid -->
+            <div class="columns-1 sm:columns-2 md:columns-3 gap-6 space-y-6">
+                @foreach ($images as $img)
+                    @include('components._portfolio-card', [
+                        'image' => $img->url,
+                        'title' => 'Leg Henna',
+                        'id' => $img->id,
+                        'type' => 'leghenna'
+                    ])
+                @endforeach
+            </div>
+
+            <!-- Admin Upload Button -->
+            @auth
+                @if(Auth::user()->hasRole('admin'))
+                    <div class="flex justify-center mt-10">
+                        <form action="{{ route('admin.leghenna.upload') }}" method="POST" enctype="multipart/form-data" id="uploadForm">
+                            @csrf
+                            <input type="file" id="adminImageUpload" name="image" accept="image/*" class="hidden" onchange="document.getElementById('uploadForm').submit()">
+                            <button type="button"
+                                    onclick="document.getElementById('adminImageUpload').click()"
+                                    class="bg-pink-500 hover:bg-pink-600 text-white w-12 h-12 rounded-full shadow-lg text-2xl flex items-center justify-center transition duration-300"
+                                    title="Upload New Image">
+                                +
+                            </button>
+                        </form>
+                    </div>
+                @endif
+            @endauth
+
+            <!-- Back Button -->
+            <div class="mt-12 text-center">
+                <a href="{{ route('portfolio') }}"
+                   class="inline-block bg-pink-600 text-white px-6 py-2 rounded-full font-semibold hover:bg-pink-700 transition">
+                    ← Back to Galleries
+                </a>
+            </div>
+        </div>
+    </div>
+</x-app-layout>
